@@ -12,7 +12,6 @@ def main():
     args = parser.parse_args()
     limit = args.limit
 
-    # 1. Dosya Yolu Kontrolü
     file_path = "golden_dataset.json"
     if not os.path.exists(file_path):
         file_path = "data/golden_dataset.json"
@@ -46,8 +45,7 @@ def main():
 
         relevant_titles = [str(doc) for doc in relevant_docs]
 
-        # RRF araması (k=10 olarak kalmış, dilerseniz görevde k=60 istenip istenmediğini kontrol edin)
-        search_result = rrf_search_command(query, k=60, limit=limit)  # Genelde 60 istenir, kodunuzda 10'du.
+        search_result = rrf_search_command(query, k=60, limit=limit) 
         results = search_result.get("results", [])
 
         retrieved_titles = [res["title"] for res in results]
@@ -57,14 +55,10 @@ def main():
             if title in relevant_titles:
                 matches += 1
 
-        # Precision
         precision = matches / limit if limit > 0 else 0.0
-
-        # Recall
         total_relevant = len(relevant_titles)
         recall = matches / total_relevant if total_relevant > 0 else 0.0
 
-        # F1 Score (Sıfıra bölünme hatasını önlemek için kontrol)
         if (precision + recall) > 0:
             f1 = 2 * (precision * recall) / (precision + recall)
         else:
@@ -73,10 +67,8 @@ def main():
         print(f"- Query: {query}")
         print(f"  - Precision@{limit}: {precision:.4f}")
         print(f"  - Recall@{limit}: {recall:.4f}")
-        # DÜZELTME 1: "F1 Score:" formatı
         print(f"  - F1 Score: {f1:.4f}")
         print(f"  - Retrieved: {', '.join(retrieved_titles)}")
-        # DÜZELTME 2: Relevant satırı eklendi
         print(f"  - Relevant: {', '.join(relevant_titles)}")
         print()
 
