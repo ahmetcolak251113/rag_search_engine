@@ -108,7 +108,6 @@ Answer:"""
     return search_titles, citations_response
 
 
-# Yeni Fonksiyon: question
 def question(question: str, limit: int = 5) -> tuple[list[str], str]:
     rrf_result = rrf_search_command(question, k=60, limit=limit)
     search_results = rrf_result['results']
