@@ -4,6 +4,7 @@ import os
 from lib.hybrid_search import rrf_search_command
 
 
+
 def main():
     parser = argparse.ArgumentParser(description="Search Evaluation CLI")
     parser.add_argument("--limit", type=int, default=5,
