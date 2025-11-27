@@ -10,16 +10,13 @@ from sentence_transformers import CrossEncoder
 load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
 
-# API Anahtarının yüklenip yüklenmediğini kontrol edin
 if not API_KEY:
     raise ValueError("GEMINI_API_KEY could not be loaded from .env file.")
 
-# CLIENT oluşturulur
 CLIENT = genai.Client(api_key=API_KEY)
 
 
 def enhance_query_spell_correction(query: str) -> str:
-    """Gemini kullanarak sorgudaki yazım hatalarını düzeltir."""
     system_prompt = f"""Fix any spelling errors in this movie search query.
 
 Only correct obvious typos. Don't change correctly spelled words.
@@ -38,7 +35,6 @@ Corrected:"""
 
 
 def enhance_query_rewrite(query: str) -> str:
-    """Gemini kullanarak belirsiz kullanıcı sorgusunu arama için daha uygun olacak şekilde yeniden yazar."""
     system_prompt = f"""Rewrite this movie search query to be more specific and searchable.
 
 Original: "{query}"
@@ -147,7 +143,6 @@ def get_llm_batch_ranks(query: str, docs: list[dict]) -> list[int]:
     """
 
     try:
-        # LLM isteğini tek bir kez yap
         response = CLIENT.models.generate_content(
             model="gemini-2.0-flash-001",
             contents=system_prompt,
@@ -169,16 +164,11 @@ def get_llm_batch_ranks(query: str, docs: list[dict]) -> list[int]:
         return []
 
 
-# YENİ ÖZELLİK: LLM Değerlendirme Fonksiyonu
 def get_llm_evaluation_scores(query: str, results: list[dict]) -> list[int]:
-    """Final arama sonuçlarını LLM'e gönderir ve 0-3 ölçeğinde JSON puanları alır."""
-
     formatted_results = []
     for i, doc in enumerate(results, 1):
-        # LLM'e gönderilecek her belgenin formatı
         formatted_results.append(f"{i}. Title: {doc.get('title', '')} - Snippet: {doc.get('document', '')[:100]}...")
 
-    # Sonuç listesini '\n' ile birleştir
     formatted_results_str = '\n'.join(formatted_results)
 
     system_prompt = f"""Rate how relevant each result is to this query on a 0-3 scale:
@@ -206,10 +196,8 @@ Return ONLY the scores in the same order you were given the documents. Return a 
             contents=system_prompt,
         )
 
-        # JSON'ı temizle ve parse et
         json_str = response.text.strip().replace("`", "").replace("json", "").strip()
 
-        # Puanların integer listesi olduğundan emin ol
         scores = json.loads(json_str)
         return [int(s) for s in scores]
 
@@ -239,7 +227,6 @@ def main() -> None:
                             help="Query enhancement method (e.g., 'spell', 'rewrite', or 'expand')", )
     rrf_parser.add_argument("--rerank-method", type=str, choices=["individual", "batch", "cross_encoder"], default=None,
                             help="Reranking method to apply after RRF (e.g., 'individual' for LLM scoring, 'batch' for LLM ranking)", )
-    # YENİ ÖZELLİK: --evaluate boolean flag'i eklendi
     rrf_parser.add_argument("--evaluate", action="store_true",
                             help="Evaluate final search results using an LLM on a 0-3 scale.", )
 
@@ -274,13 +261,13 @@ def main() -> None:
             method = None
             rerank_method = args.rerank_method
 
-            # DEBUG LOGS START
+           
             print(f"\n--- DEBUG: Pipeline Start ---")
             print(f"Original Query: '{original_query}'")
             print(f"Rerank Method: {rerank_method}")
             print(f"Initial Limit: {args.limit}")
 
-            # 1. Query Enhancement
+
             if args.enhance == "spell":
                 enhanced_query = enhance_query_spell_correction(original_query)
                 method = "spell"
@@ -297,7 +284,6 @@ def main() -> None:
             if enhanced_query != original_query:
                 print(f"DEBUG: Enhanced Query Used: '{enhanced_query}'")
 
-            # 2. RRF Arama Limitini Ayarlama
             initial_limit = args.limit
             search_limit = initial_limit
 
@@ -310,7 +296,6 @@ def main() -> None:
                 elif rerank_method == "cross_encoder":
                     print(f"Reranking top {initial_limit} results using cross_encoder method...")
 
-            # 3. RRF Aramasını Çalıştır (Veriyi Al)
             result = rrf_search_command(enhanced_query, args.k, search_limit)
             final_results = result["results"]
 
@@ -319,7 +304,6 @@ def main() -> None:
                 print(
                     f"  {i + 1}. {res['title']} (RRF: {res['score']:.4f}, BM25 Rank: {res['metadata'].get('bm25_rank')})")
 
-            # 4. Reranking Mantığı
             if rerank_method == "individual":
                 reranked_docs = []
                 for i, res in enumerate(final_results):
@@ -363,10 +347,8 @@ def main() -> None:
                     reverse=True
                 )
 
-            # 5. Sonuçları Kırp
             final_results = final_results[:initial_limit]
 
-            # DEBUG LOGS END
             print(f"\nDEBUG: Final {initial_limit} Results (After Reranking):")
             for i, res in enumerate(final_results):
                 score_label = "CE Score" if rerank_method == "cross_encoder" else "LLM Rank"
@@ -374,17 +356,15 @@ def main() -> None:
                 print(f"  {i + 1}. {res['title']} ({score_label}: {score})")
             print("--- DEBUG: End Pipeline ---")
 
-            # YENİ ÖZELLİK: LLM Değerlendirme Raporu
             if args.evaluate:
                 llm_scores = get_llm_evaluation_scores(enhanced_query, final_results)
 
                 print("\n--- LLM Evaluation Report (0-3 Scale) ---")
                 for i, doc in enumerate(final_results):
-                    score = llm_scores[i] if i < len(llm_scores) else 0  # Puan yoksa 0 kullan
+                    score = llm_scores[i] if i < len(llm_scores) else 0  
                     print(f"{i + 1}. {doc.get('title', 'N/A')}: {score}/3")
                 print("------------------------------------------")
 
-            # 6. Normal Çıktı Yazdırma
             if rerank_method == "batch":
                 print()
 
@@ -405,7 +385,6 @@ def main() -> None:
                     ce_score = res.get("cross_encoder_score", 0.0)
                     print(f"   Cross Encoder Score: {ce_score:.3f}")
 
-                # RRF Score her zaman yazdırılır
                 print(f"   RRF Score: {res.get('score', 0):.3f}")
 
                 metadata = res.get("metadata", {})
