@@ -15,6 +15,7 @@ This repository is a CLI toolkit that can run **keyword search (BM25 / TF-IDF)**
 - [5) Usage Guide](#5-usage-guide)
 - [6) File-by-File Overview](#6-file-by-file-overview)
 - [7) Common Issues](#7-common-issues)
+- [8) Contrabuting](#8-contrabuting)
 
 ---
 ## 0) Motivation
@@ -321,3 +322,45 @@ Enable caching for repeated queries
 Use batch reranking for large result sets
 Consider disabling LLM features for faster, lighter searches
 
+# 7) Contributing
+Contributions are welcome—please keep changes clean, reproducible, and consistent with the repo’s “no artifacts committed” philosophy.
+## 7.1 Ground Rules (Keep Git Clean)
+Please do not commit:
+.env (use .env.example)
+.venv/
+local caches (embedding outputs, model caches, tokenizer caches)
+generated indexes or intermediate artifacts
+large datasets or downloaded model weights
+If you introduce new cache/output folders, add them to .gitignore.
+##7.2 Development Setup
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+(Optional) Create .env from the template:
+cp .env.example .env
+# then set GEMINI_API_KEY=...
+## 7.3 How to Contribute
+Create a feature branch:
+git checkout -b feature/short-description
+Make changes with minimal scope:
+One feature/fix per PR is preferred.
+Keep functions small, deterministic, and testable where possible.
+Maintain consistent naming and CLI flags.
+Run a quick sanity check:
+python cli/keyword_search_cli.py build
+python cli/semantic_search_cli.py verify
+python cli/multimodal_search_cli.py verify_image_embedding data/paddington.jpeg
+If you modify behavior, update docs:
+README CLI usage
+help text in argparse
+comments/docstrings for math/scoring logic
+Open a Pull Request:
+Include a clear description of the change.
+Provide example commands/output when it helps.
+Mention any new dependency and justify it.
+## 7.4 Contribution Ideas
+Improve tokenization / normalization (stopwords, stemming options, etc.)
+Add better evaluation reporting (macro averages, per-query breakdown)
+Add more hybrid fusion strategies or configurable weighting
+Improve caching discipline and cache invalidation
+Add lightweight tests for BM25 / TF-IDF / RRF correctness
