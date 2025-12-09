@@ -126,9 +126,9 @@ python cli/augmented_generation_cli.py get_rag --query "What should I watch if I
 python cli/augmented_generation_cli.py summarize --query "best sci-fi classics" --limit 5
 python cli/augmented_generation_cli.py citations --query "movies about time travel" --limit 5
 python cli/augmented_generation_cli.py question --query "which movie has X plot?" --limit 5
-Evaluation & Utility CLI
 ```
 ```bash
+# Evaluation & Utility CLI
 python cli/evaluation_cli.py --limit 5
 python cli/describe_image_cli.py --image data/paddington.jpeg --query "family friendly movie"
 python cli/gemini_test_cli.py
@@ -189,9 +189,10 @@ When users have visual references but no text descriptions
 Cross-modal retrieval applications
 Examples:
 
-bash
+```bash
 python cli/multimodal_search_cli.py image_search data/paddington.jpeg --limit 5
-5.4 Hybrid Search (Combining Methods)
+```
+## 5.4 Hybrid Search (Combining Methods)
 
 When to use it:
 
@@ -200,19 +201,22 @@ When queries contain both specific terms and conceptual meaning
 Balancing between exact matching and semantic understanding
 Weighted Hybrid:
 
-bash
+```bash
 # Adjust alpha (0-1) to balance keyword vs semantic
 python cli/hybrid_search_cli.py weighted-search "neo the one" --alpha 0.5 --limit 5
 Reciprocal Rank Fusion (RRF):
-
-bash
+```
+```bash
 # RRF combines rankings without score normalization issues
 python cli/hybrid_search_cli.py rrf-search "neo the one" --k 60 --limit 5
-5.5 Advanced Features with LLM Integration
+```
+
+
+## 5.5 Advanced Features with LLM Integration
 
 Query Enhancement:
 
-bash
+```bash
 python cli/hybrid_search_cli.py rrf-search "neo the one" --enhance rewrite --limit 5
 Reranking Options:
 
@@ -222,7 +226,8 @@ LLM-Based Evaluation:
 
 bash
 python cli/hybrid_search_cli.py rrf-search "neo the one" --evaluate --limit 5
-5.6 RAG (Retrieval-Augmented Generation)
+```
+## 5.6 RAG (Retrieval-Augmented Generation)
 
 When to use it:
 
@@ -231,14 +236,15 @@ Generating summaries based on multiple results
 Creating cited responses for research or analysis
 Examples:
 
-bash
+```bash
 python cli/augmented_generation_cli.py get_rag --query "What should I watch if I like cozy bear movies?" --limit 5
 python cli/augmented_generation_cli.py summarize --query "best sci-fi classics" --limit 5
-5.7 Workflow Examples
+```
+## 5.7 Workflow Examples
 
 Basic Search Pipeline:
 
-bash
+```bash
 # 1. Build keyword index
 python cli/keyword_search_cli.py build
 
@@ -258,7 +264,8 @@ python cli/hybrid_search_cli.py rrf-search "movie about artificial intelligence"
 
 # 2. Generate comprehensive answer with citations
 python cli/augmented_generation_cli.py get_rag --query "movie about artificial intelligence" --limit 5
-5.8 Tips for Effective Usage
+```
+## 5.8 Tips for Effective Usage
 
 Start Simple: Begin with basic keyword or semantic search before using hybrid methods
 Cache Wisely: The system caches embeddings - first run will be slower
@@ -266,7 +273,8 @@ Limit Results: Use --limit parameter to control output, especially during testin
 Experiment with Alpha: In weighted hybrid, try different alpha values (0.1, 0.3, 0.5, 0.7, 0.9)
 Use Evaluation: Run the evaluation CLI to quantitatively compare different search configurations
 Check API Limits: Be mindful of Gemini API usage when using enhancement, reranking, or evaluation features
-6) File-by-File Overview
+
+# 6) File-by-File Overview
 
 Core Library Modules
 
@@ -290,7 +298,7 @@ Data & Configuration
 data/movies.json: Movie dataset with IDs, titles, and descriptions
 requirements.txt: Python dependencies
 .env.example: Template for environment variables (API keys)
-7) Common Issues
+# 7) Common Issues
 
 Installation Issues
 
@@ -312,3 +320,4 @@ Use chunked search for long documents
 Enable caching for repeated queries
 Use batch reranking for large result sets
 Consider disabling LLM features for faster, lighter searches
+
