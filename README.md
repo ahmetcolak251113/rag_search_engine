@@ -7,6 +7,7 @@ This repository is a CLI toolkit that can run **keyword search (BM25 / TF-IDF)**
 ---
 
 ## Table of Contents
+- [0) Motivation](#0-motivation)
 - [1) Quick Start](#1-quick-start)
 - [2) Data and Cache Logic](#2-data-and-cache-logic)
 - [3) Mathematical Background](#3-mathematical-background)
@@ -15,6 +16,16 @@ This repository is a CLI toolkit that can run **keyword search (BM25 / TF-IDF)**
 - [6) Common Issues](#6-common-issues)
 
 ---
+## 0) Motivation
+This project is a comprehensive search engine toolkit built to demonstrate and deepen my understanding of modern information retrieval systems. It moves beyond basic keyword matching to explore semantic, multimodal, and hybrid search techniques—core components of today's AI-powered applications.
+
+I designed this repository to:
+
+Showcase practical implementation skills across the full search stack: from traditional algorithms (TF-IDF, BM25) to neural embedding models (Sentence Transformers, CLIP) and advanced fusion methods (Reciprocal Rank Fusion).
+Solidify conceptual learning by building each component from the ground up. Implementing algorithms like BM25 and RRF provided deep, hands-on insight into their mathematical foundations and trade-offs.
+Bridge the gap between retrieval and generation by integrating search with a Large Language Model (Gemini) for query enhancement, reranking, result evaluation, and Retrieval-Augmented Generation (RAG). This creates a complete pipeline from user query to enriched, cited response.
+Embrace real-world engineering concerns, such as chunking strategies for long documents, caching embeddings for performance, configurable hybrid scoring, and a modular CLI architecture for extensibility.
+Ultimately, this toolkit is a tangible record of my exploration into how search systems think. It reflects a commitment to not just using APIs, but understanding the principles that make them effective, preparing me to build and optimize intelligent search solutions in a professional environment.
 
 ## 1) Quick Start
 
@@ -116,3 +127,4 @@ This repository is a CLI toolkit that can run **keyword search (BM25 / TF-IDF)**
 - `cli/gemini_test_cli.py`: Gemini API connection test.
 
 ---
+
